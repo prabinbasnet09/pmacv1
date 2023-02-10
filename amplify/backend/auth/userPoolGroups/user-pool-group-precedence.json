@@ -1,0 +1,18 @@
+[
+  {
+    "groupName": "Student",
+    "precedence": 1
+  },
+  {
+    "groupName": "Faculty",
+    "precedence": 2
+  },
+  {
+    "groupName": "Admin",
+    "precedence": 3
+  },
+  {
+    "groupName": "Chair",
+    "precedence": 4
+  }
+]
