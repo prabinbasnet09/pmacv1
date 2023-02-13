@@ -20,7 +20,7 @@
       "function": {
         "pmacv10893bbb00893bbb0PostConfirmation": {
           "deploymentBucketName": "amplify-pmacv1-dev-200407-deployment",
-          "s3Key": "amplify-builds/pmacv10893bbb00893bbb0PostConfirmation-4e614f39542f64473156-build.zip"
+          "s3Key": "amplify-builds/pmacv10893bbb00893bbb0PostConfirmation-5770446579776b43396d-build.zip"
         }
       },
       "api": {

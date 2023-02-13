@@ -13,7 +13,7 @@ function Home({signOut}) {
   const router = useRouter();
   const [groupName, setGroupName] = useState('');
   const [users, setUsers] = useState(null);
- 
+
   useEffect(() => {
     const { group, users} = activeUser;
     setGroupName(group);
@@ -40,7 +40,7 @@ function Home({signOut}) {
               <div>
                 <div>
                   
-                  <h1>Welcome {`${activeUser.username}`}</h1> 
+                  <h1>Welcome {`${activeUser.name}`}</h1> 
                 </div>
 
                 <div>

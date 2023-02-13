@@ -6,6 +6,7 @@ const cognitoIdp = new AWS.CognitoIdentityServiceProvider();
 exports.handler = async (event, context) => {
   const username = event.userName;
   const email = event.request.userAttributes.email;
+  const name = event.request.userAttributes.name;
 
   // Determine the group name using the user's email address
   const groupName = email.endsWith("@ulm.edu") ? "Faculty" : "Student";
@@ -35,7 +36,9 @@ exports.handler = async (event, context) => {
               'id': {S: event.request.userAttributes.sub},
               '__typename': {S: 'User'},
               'username': {S: username},
+              'name': {S: name},
               'email': {S: email},
+              'group': {S: groupName},
               'createdAt': {S: date.toISOString()},
               'updatedAt': {S: date.toISOString()},
           },

@@ -14,7 +14,7 @@ export default function Applicants() {
         <div>
             <h1>Applicants List</h1>
             {users &&
-                users.map((user) => {
+                users.filter((user) => user.username != activeUser.username).map((user) => {
                     return (
                         <div key={user.id}>
                             <h3>Username: {user.username}</h3>

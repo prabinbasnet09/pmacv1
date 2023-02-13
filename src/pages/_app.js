@@ -2,9 +2,7 @@ import { createContext, useState, useEffect} from "react";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 
-import AWS from "aws-sdk";
-
-import { Amplify, API, Auth} from "aws-amplify";
+import { Amplify, API } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import '@aws-amplify/ui-react/styles.css';
 
@@ -13,29 +11,13 @@ import * as queries from '../graphql/queries'
 import awsExports from "../aws-exports";
 Amplify.configure(awsExports);
 
-AWS.config.update({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
-
 export const ActiveUser = createContext();
 
 export const ActiveUserProvider = ({children, user}) => {
-
-  const [userGroup, setUserGroup] = useState('');
+  
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-      cognitoIdentityServiceProvider.adminListGroupsForUser(params,
-        function (err, data) {
-          if (err) {
-            console.log(err, err.stack);
-          } else {
-            setUserGroup(data.Groups[0].GroupName);
-          }
-        }
-    );
     
       const setLocalStorage = (key, value, ttl = 2 * 60 * 1000) => {
         const expiresAt = new Date(Date.now() + ttl);
@@ -47,7 +29,6 @@ export const ActiveUserProvider = ({children, user}) => {
         if(!item) return null
         
         if(new Date() >= new Date(item.expiresAt)) {
-          console.log('expired')
           localStorage.removeItem(key);
           return null;
         }
@@ -74,19 +55,12 @@ export const ActiveUserProvider = ({children, user}) => {
 
   }, []);
 
-  const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
-  const params = {
-    UserPoolId: 'us-east-1_K216AnHxh',
-    Username: user.username
-  }
-
-  console.log(user)
-
   const loggedUser = {
     id: user.attributes.sub,
     username: user.username,
+    name: user.attributes.name,
     email: user.attributes.email,
-    group: userGroup,
+    group: users.filter((userProfile) => userProfile.username === user.username).map((user) => user.group)[0],
     users: users
   }
 

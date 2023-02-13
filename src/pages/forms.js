@@ -1,5 +1,8 @@
 import React from "react"
 import { useState, useEffect} from 'react'
+import { useContext } from "react"
+
+import { ActiveUser } from './_app.js'
 
 import { TextField, Button } from '@mui/material'
 import { Box } from '@mui/system'
@@ -8,22 +11,29 @@ import { createUser } from '../graphql/mutations'
 import { API, graphqlOperation, Auth } from 'aws-amplify'
 
 
-function Forms({ user }) {
+function Forms() {
+    const activeUser = useContext(ActiveUser);
     const [groupName, setGroupName] = useState('');
-
     const [formData, setFormData] = useState({});
 
     useEffect(() => {
-
+        setGroupName(activeUser.group);
         if(localStorage.getItem('formData')){
             setFormData(JSON.parse(localStorage.getItem('formData')));
         }
-    }, [user]);
+    }, [activeUser]);
 
-    useEffect(() => {
+    const handleSave = (e) => {
+        e.preventDefault();
         localStorage.setItem('formData', JSON.stringify(formData));
-    }, [formData]);
+    }
 
+    const handleClearAll = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('formData');
+        setFormData({});
+    }
+    
     const handleForm = (e) => {
         e.preventDefault();
         setFormData({
@@ -48,7 +58,6 @@ function Forms({ user }) {
 
     return (
         <div>
-            {console.log(groupName)}
             {groupName &&
             <div>
                 <div>
@@ -162,15 +171,23 @@ function Forms({ user }) {
                             onChange={(e) => handleForm(e)}
                             />
                     </div>
-                    {/* <Button variant="contained"
+                    <Button variant="contained"
                     onClick={(e) => {
                         handleSave(e)}}     
                     >Save</Button>
-                    <br /> */}
+                    <br />
+                    <Button variant="contained"
+                    onClick={(e) => {
+                        handleClearAll(e)}}     
+                    >Clear All</Button>
+                    <br />
                     <Button variant="contained"
                     onClick={(e) => {
                         handleChange(e)}}     
                     >Submit</Button>
+                    <br />
+                    <Button variant="contained"   
+                    >Download Form</Button>
                     <br />
                 </Box>
             </div>
