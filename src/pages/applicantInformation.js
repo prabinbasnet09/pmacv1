@@ -11,7 +11,7 @@ import { createUser } from '../graphql/mutations'
 import { API, graphqlOperation, Auth } from 'aws-amplify'
 
 
-function Forms() {
+function ApplicantInformation() {
     const activeUser = useContext(ActiveUser);
     const [groupName, setGroupName] = useState('');
     const [formData, setFormData] = useState({});
@@ -61,15 +61,7 @@ function Forms() {
             {groupName &&
             <div>
                 <div>
-                { 
-                    (groupName === "Student") ?
-                    <h1>Student Form</h1> : 
-                    (groupName === "Faculty") ?
-                    <h1>Faculty Form</h1> :
-                    (groupName === "Admin") ?
-                    <h1>Admin Form</h1> :
-                    null
-                }
+                    <h1>Applicant Information Form</h1>
                 </div>
 
                 <div>
@@ -197,4 +189,4 @@ function Forms() {
     )
 }
 
-export default Forms
+export default ApplicantInformation

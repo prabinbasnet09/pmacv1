@@ -55,14 +55,14 @@ function Home({signOut}) {
                 {
                   (groupName === "Student") ?
                   <div>
-                    <Link href="/forms" >
-                      <h3>Form 1</h3>
+                    <Link href="/applicantInformation" >
+                      <h3>Applicant Information Form</h3>
                     </Link> 
-                    <Link href="/forms" >
-                      <h3>Form 2</h3>
+                    <Link href="/facultyEvaluation" >
+                      <h3>Faculty Recommendation Form</h3>
                     </Link>  
-                    <Link href="/forms" >
-                      <h3>Form 3</h3>
+                    <Link href="/informationRelease" >
+                      <h3>Information Release Form</h3>
                     </Link>
                   </div> : 
                   (groupName === "Faculty") ?
