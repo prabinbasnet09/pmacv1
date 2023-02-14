@@ -13,3 +13,19 @@ type User
   name: String!
   group: String!
 }
+
+type ApplicantForm
+  @model
+  @auth(
+    rules: [
+      { allow: owner, ownerField: "userId", operations: [create, read, update] }
+    ]
+  ) {
+  userId: String! @primaryKey
+  fullName: String!
+  cwid: String!
+  cellPhone: String!
+  email: String!
+  major: [String!]!
+  minor: [String!]
+}

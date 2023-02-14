@@ -7,8 +7,9 @@ import { ActiveUser } from './_app.js'
 import { TextField, Button } from '@mui/material'
 import { Box } from '@mui/system'
 
-import { createUser } from '../graphql/mutations'
-import { API, graphqlOperation, Auth } from 'aws-amplify'
+import { createApplicantForm, updateApplicantForm} from '../graphql/mutations'
+import { API } from 'aws-amplify'
+import { getApplicantForm } from "@/graphql/queries.js"
 
 
 function ApplicantInformation() {
@@ -18,8 +19,33 @@ function ApplicantInformation() {
 
     useEffect(() => {
         setGroupName(activeUser.group);
-        if(localStorage.getItem('formData')){
-            setFormData(JSON.parse(localStorage.getItem('formData')));
+
+        const getFormData = async () => {
+            await API.graphql({
+                query: getApplicantForm,
+                variables: {userId: activeUser.id},
+                authMode: 'AMAZON_COGNITO_USER_POOLS'
+                })
+                .then((res) => {
+                    const response = res.data.getApplicantForm;
+                    setFormData({
+                        fullName: response.fullName,
+                        cwid: response.cwid,
+                        cellPhone: response.cellPhone,
+                        email: response.email,
+                        major: response.major[0],
+                    });
+                }
+                )
+                .catch((err) => {
+                    console.log(err);
+                    return null;
+                }
+            );
+        }
+
+        if(!localStorage.getItem('formData')){
+            getFormData();
         }
     }, [activeUser]);
 
@@ -42,15 +68,63 @@ function ApplicantInformation() {
         })
     };
 
-    const handleChange = async (e) => {
+    const handleUpdate = async(e) => {
         e.preventDefault();
+        var majors = [];
+        majors.push(formData.major);
+        try{
+            const inputData = {
+                userId: activeUser.id,
+                fullName: formData.fullName,
+                cwid: formData.cwid,
+                cellPhone: formData.cellPhone,
+                email: formData.email,
+                major: majors,
+              }
+            await API.graphql({
+                query: updateApplicantForm,
+                variables: {input: inputData},
+                authMode: 'AMAZON_COGNITO_USER_POOLS'
+            })
+            .then((res) => {
+                console.log("Form updated successfully")
+              })
+            .catch((err) => {
+                console.log(err);
+                return null;
+            });
+        } catch(err) {
+            console.log('error updating user: ', err)
+        }
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        var majors = [];
+        majors.push(formData.major);
         try{
           const inputData = {
-            firstName: firstName,
-            lastName: lastName,
-            classification: classification
+            userId: activeUser.id,
+            fullName: formData.fullName,
+            cwid: formData.cwid,
+            cellPhone: formData.cellPhone,
+            email: formData.email,
+            major: majors,
           }
-          await API.graphql(graphqlOperation(createUser, {input: inputData}))
+          console.log(inputData);
+          await API.graphql({
+            query: createApplicantForm,
+            variables: {input: inputData},
+            authMode: 'AMAZON_COGNITO_USER_POOLS'
+          }
+        )
+        .then((res) => {
+            console.log("Form created successfully")
+          })
+          .catch((err) => {
+            console.log(err);
+            return null;
+          });
         } catch(err) {
           console.log('error creating user: ', err)
         }
@@ -74,7 +148,7 @@ function ApplicantInformation() {
                         autoComplete="off"
                     >
                     <div>
-                        <label htmlFor="outlined-required">Full Name</label>
+                        <label htmlFor="outlined-required">Full Name (Print)</label>
                         <br />
                         <br />
                         <TextField
@@ -127,8 +201,8 @@ function ApplicantInformation() {
                             id="outlined-required"
                             label="Required"
                             placeholder='Alternative Email'
-                            name="alternativeEmail"
-                            value={formData.alternativeEmail || ''}
+                            name="email"
+                            value={formData.email || ''}
                             // onChange={(e) => setClassification(e.target.value)}
                             onChange={(e) => handleForm(e)}
                             />
@@ -143,7 +217,7 @@ function ApplicantInformation() {
                             label="Required"
                             placeholder='Major(s)'
                             name="major"
-                            value={formData.major || ''}
+                            value={formData.major ? formData.major : ''}
                             // onChange={(e) => setClassification(e.target.value)}
                             onChange={(e) => handleForm(e)}
                             />
@@ -158,7 +232,7 @@ function ApplicantInformation() {
                             label="Required"
                             placeholder='Minor(s)'
                             name="minor"
-                            value={formData.minor || ''}
+                            value={formData.minor ? formData.minor : ''}
                             // onChange={(e) => setClassification(e.target.value)}
                             onChange={(e) => handleForm(e)}
                             />
@@ -175,8 +249,12 @@ function ApplicantInformation() {
                     <br />
                     <Button variant="contained"
                     onClick={(e) => {
-                        handleChange(e)}}     
+                        handleSubmit(e)}}     
                     >Submit</Button>
+                    <Button variant="contained"
+                    onClick={(e) => {
+                        handleUpdate(e)}}     
+                    >Update</Button>
                     <br />
                     <Button variant="contained"   
                     >Download Form</Button>

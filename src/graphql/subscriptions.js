@@ -49,3 +49,57 @@ export const onDeleteUser = /* GraphQL */ `
     }
   }
 `;
+export const onCreateApplicantForm = /* GraphQL */ `
+  subscription OnCreateApplicantForm(
+    $filter: ModelSubscriptionApplicantFormFilterInput
+    $userId: String
+  ) {
+    onCreateApplicantForm(filter: $filter, userId: $userId) {
+      userId
+      fullName
+      cwid
+      cellPhone
+      email
+      major
+      minor
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateApplicantForm = /* GraphQL */ `
+  subscription OnUpdateApplicantForm(
+    $filter: ModelSubscriptionApplicantFormFilterInput
+    $userId: String
+  ) {
+    onUpdateApplicantForm(filter: $filter, userId: $userId) {
+      userId
+      fullName
+      cwid
+      cellPhone
+      email
+      major
+      minor
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteApplicantForm = /* GraphQL */ `
+  subscription OnDeleteApplicantForm(
+    $filter: ModelSubscriptionApplicantFormFilterInput
+    $userId: String
+  ) {
+    onDeleteApplicantForm(filter: $filter, userId: $userId) {
+      userId
+      fullName
+      cwid
+      cellPhone
+      email
+      major
+      minor
+      createdAt
+      updatedAt
+    }
+  }
+`;
