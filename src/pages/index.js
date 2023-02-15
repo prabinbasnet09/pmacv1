@@ -7,7 +7,6 @@ import { Button } from '@mui/material'
 
 import { ActiveUser } from './_app.js'
 
-
 function Home({signOut}) {
   const activeUser = useContext(ActiveUser);
   const router = useRouter();

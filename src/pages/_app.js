@@ -2,14 +2,14 @@ import { createContext, useState, useEffect} from "react";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 
-import { Amplify, API } from "aws-amplify";
+import { Amplify, API} from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import '@aws-amplify/ui-react/styles.css';
 
 import * as queries from '../graphql/queries'
 
 import awsExports from "../aws-exports";
-Amplify.configure(awsExports);
+Amplify.configure({...awsExports, ssr: true});
 
 export const ActiveUser = createContext();
 

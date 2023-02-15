@@ -8,47 +8,37 @@ import { TextField, Button } from '@mui/material'
 import { Box } from '@mui/system'
 
 import { createApplicantForm, updateApplicantForm} from '../graphql/mutations'
-import { API } from 'aws-amplify'
+import { API, withSSRContext} from 'aws-amplify'
 import { getApplicantForm } from "@/graphql/queries.js"
 
 
-function ApplicantInformation() {
+export async function getServerSideProps({req}) {
+    const SSR = withSSRContext({req});
+    const user = await SSR.Auth.currentAuthenticatedUser();
+    const {data} = await SSR.API.graphql({
+        query: getApplicantForm,
+        variables: {userId: user.attributes.sub},
+        authMode: 'AMAZON_COGNITO_USER_POOLS'
+    });
+    return {
+        props: {
+            data: data.getApplicantForm
+        }
+    }
+}
+
+function ApplicantInformation({data}) {
     const activeUser = useContext(ActiveUser);
-    const [groupName, setGroupName] = useState('');
-    const [formData, setFormData] = useState({});
-
-    useEffect(() => {
-        setGroupName(activeUser.group);
-
-        const getFormData = async () => {
-            await API.graphql({
-                query: getApplicantForm,
-                variables: {userId: activeUser.id},
-                authMode: 'AMAZON_COGNITO_USER_POOLS'
-                })
-                .then((res) => {
-                    const response = res.data.getApplicantForm;
-                    setFormData({
-                        fullName: response.fullName,
-                        cwid: response.cwid,
-                        cellPhone: response.cellPhone,
-                        email: response.email,
-                        major: response.major[0],
-                    });
-                }
-                )
-                .catch((err) => {
-                    console.log(err);
-                    return null;
-                }
-            );
-        }
-
-        if(!localStorage.getItem('formData')){
-            getFormData();
-        }
-    }, [activeUser]);
-
+    const [formData, setFormData] = useState({
+        userId: data ? data.userId : '',
+        fullName: data ? data.fullName : '',
+        cwid: data ? data.cwid : '',
+        cellPhone: data ? data.cellPhone : '',
+        email: data ? data.email : '',
+        major: data ? data.major[0] : '',
+        minor: data && data.minor ? data.minor[0] : '',
+    });
+    
     const handleSave = (e) => {
         e.preventDefault();
         localStorage.setItem('formData', JSON.stringify(formData));
@@ -74,7 +64,7 @@ function ApplicantInformation() {
         majors.push(formData.major);
         try{
             const inputData = {
-                userId: activeUser.id,
+                userId: formData.userId,
                 fullName: formData.fullName,
                 cwid: formData.cwid,
                 cellPhone: formData.cellPhone,
@@ -132,7 +122,6 @@ function ApplicantInformation() {
 
     return (
         <div>
-            {groupName &&
             <div>
                 <div>
                     <h1>Applicant Information Form</h1>
@@ -247,14 +236,17 @@ function ApplicantInformation() {
                         handleClearAll(e)}}     
                     >Clear All</Button>
                     <br />
-                    <Button variant="contained"
-                    onClick={(e) => {
-                        handleSubmit(e)}}     
-                    >Submit</Button>
-                    <Button variant="contained"
-                    onClick={(e) => {
-                        handleUpdate(e)}}     
-                    >Update</Button>
+                    {
+                        formData && formData.userId ? 
+                        <Button variant="contained"
+                        onClick={(e) => {
+                            handleUpdate(e)}}     
+                        >Update</Button> :
+                        <Button variant="contained"
+                        onClick={(e) => {
+                            handleSubmit(e)}}     
+                        >Submit</Button>
+                    }
                     <br />
                     <Button variant="contained"   
                     >Download Form</Button>
@@ -262,7 +254,6 @@ function ApplicantInformation() {
                 </Box>
             </div>
             </div>
-            }
         </div> 
     )
 }
