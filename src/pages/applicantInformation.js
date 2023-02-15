@@ -50,6 +50,7 @@ function ApplicantInformation() {
                 .then((res) => {
                     const response = res.data.getApplicantForm;
                     setFormData({
+                        userId: response.userId,
                         fullName: response.fullName,
                         cwid: response.cwid,
                         cellPhone: response.cellPhone,
@@ -273,7 +274,7 @@ function ApplicantInformation() {
                     >Clear All</Button>
                     <br />
                     {
-                        formData && formData.userId ? 
+                        (formData) ? 
                         <Button variant="contained"
                         onClick={(e) => {
                             handleUpdate(e)}}     
