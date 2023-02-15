@@ -8,37 +8,73 @@ import { TextField, Button } from '@mui/material'
 import { Box } from '@mui/system'
 
 import { createApplicantForm, updateApplicantForm} from '../graphql/mutations'
-import { API, withSSRContext} from 'aws-amplify'
 import { getApplicantForm } from "@/graphql/queries.js"
 
+import { API, graphqlOperation } from 'aws-amplify'
 
-export async function getServerSideProps({req}) {
-    const SSR = withSSRContext({req});
-    const user = await SSR.Auth.currentAuthenticatedUser();
-    const {data} = await SSR.API.graphql({
-        query: getApplicantForm,
-        variables: {userId: user.attributes.sub},
-        authMode: 'AMAZON_COGNITO_USER_POOLS'
-    });
-    return {
-        props: {
-            data: data.getApplicantForm
-        }
-    }
-}
+// export async function getServerSideProps({req}) {
+//     const SSR = withSSRContext({req});
+//     const user = await SSR.Auth.currentAuthenticatedUser();
+//     const {data} = await SSR.API.graphql({
+//         query: getApplicantForm,
+//         variables: {userId: user.attributes.sub},
+//         authMode: 'AMAZON_COGNITO_USER_POOLS'
+//     });
+//     return {
+//         props: {
+//             data: data.getApplicantForm
+//         }
+//     }
+// }
 
-function ApplicantInformation({data}) {
+function ApplicantInformation() {
     const activeUser = useContext(ActiveUser);
-    const [formData, setFormData] = useState({
-        userId: data ? data.userId : '',
-        fullName: data ? data.fullName : '',
-        cwid: data ? data.cwid : '',
-        cellPhone: data ? data.cellPhone : '',
-        email: data ? data.email : '',
-        major: data ? data.major[0] : '',
-        minor: data && data.minor ? data.minor[0] : '',
-    });
+    // const [formData, setFormData] = useState({
+    //     userId: data ? data.userId : '',
+    //     fullName: data ? data.fullName : '',
+    //     cwid: data ? data.cwid : '',
+    //     cellPhone: data ? data.cellPhone : '',
+    //     email: data ? data.email : '',
+    //     major: data ? data.major[0] : '',
+    //     minor: data && data.minor ? data.minor[0] : '',
+    // });
+    const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        const getFormData = async () => {
+            await API.graphql({
+                query: getApplicantForm,
+                variables: {userId: activeUser.id},
+                authMode: 'AMAZON_COGNITO_USER_POOLS'
+                })
+                .then((res) => {
+                    const response = res.data.getApplicantForm;
+                    setFormData({
+                        fullName: response.fullName,
+                        cwid: response.cwid,
+                        cellPhone: response.cellPhone,
+                        email: response.email,
+                        major: response.major[0],
+                    });
+                }
+                )
+                .catch((err) => {
+                    console.log(err);
+                    return null;
+                }
+            );
+        }
+
+        if(!localStorage.getItem('formData')){
+            getFormData();
+        } else {
+            setFormData(JSON.parse(localStorage.getItem('formData')));
+        }
+    }, [activeUser]);
+        
     
+    
+
     const handleSave = (e) => {
         e.preventDefault();
         localStorage.setItem('formData', JSON.stringify(formData));
