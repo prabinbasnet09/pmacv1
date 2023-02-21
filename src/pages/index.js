@@ -7,21 +7,33 @@ import { Button } from '@mui/material'
 
 import { ActiveUser } from './_app.js'
 
+import Cookies from 'js-cookie'
+import AppUsers from '@/components/app-users.js'
+
 function Home({signOut}) {
   const activeUser = useContext(ActiveUser);
   const router = useRouter();
-  const [groupName, setGroupName] = useState('');
+  const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState(null);
 
   useEffect(() => {
     const { group, users} = activeUser;
-    setGroupName(group);
+   
+    setGroups(group);
+
     setUsers(users);
   }, [activeUser]);
 
   // handles the signout
   const handelSignOut = () => {
+    //clearing local storage
     localStorage.clear();
+    //clearing cookie session
+    Cookies.remove(`CognitoIdentityServiceProvider.v2hlarf0c3dcm13nn2vcbti14.${activeUser.username}.refreshToken`);
+    Cookies.remove(`CognitoIdentityServiceProvider.v2hlarf0c3dcm13nn2vcbti14.${activeUser.username}.accessToken`);
+    Cookies.remove(`CognitoIdentityServiceProvider.v2hlarf0c3dcm13nn2vcbti14.LastAuthUser`);
+    Cookies.remove(`CognitoIdentityServiceProvider.v2hlarf0c3dcm13nn2vcbti14.${activeUser.username}.idToken`);
+
     router.push('/');
   }
 
@@ -41,7 +53,11 @@ function Home({signOut}) {
                   
                   <h1>Welcome {`${activeUser.name}`}</h1> 
                 </div>
-
+                {console.log(groups)}
+              {
+              (groups.filter(group => (group === "Admin" || group === "Chair Committee")).length > 0) ? 
+                <AppUsers /> :
+                <div>
                 <div>
                   <h3>Profile Information</h3>
                   {users.filter((user) => user.username === activeUser.username).map((userProfile) =>
@@ -51,8 +67,9 @@ function Home({signOut}) {
                     </div>
                   )} 
                 </div>
+
                 {
-                  (groupName === "Student") ?
+                  (groups.filter(group => group === "Student").length > 0) ?
                   <div>
                     <Link href="/applicantInformation" >
                       <h3>Applicant Information Form</h3>
@@ -64,7 +81,7 @@ function Home({signOut}) {
                       <h3>Information Release Form</h3>
                     </Link>
                   </div> : 
-                  (groupName === "Faculty") ?
+                  (groups.filter(group => group === "Faculty").length > 0) ?
                   <div>
                     <Link href="/applicants" >
                       <Button variant="contained">
@@ -73,6 +90,8 @@ function Home({signOut}) {
                     </Link>
                   </div> : null
                 }   
+                </div>
+              }
               </div>
               :
               <div>

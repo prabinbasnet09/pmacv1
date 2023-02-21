@@ -7,6 +7,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import '@aws-amplify/ui-react/styles.css';
 
 import * as queries from '../graphql/queries'
+import { onUpdateUser } from '@/graphql/subscriptions.js';
 
 import awsExports from "../aws-exports";
 Amplify.configure({...awsExports, ssr: true});
@@ -19,7 +20,7 @@ export const ActiveUserProvider = ({children, user}) => {
 
   useEffect(() => {
     
-      const setLocalStorage = (key, value, ttl = 2 * 60 * 1000) => {
+      const setLocalStorage = (key, value, ttl = 5 * 60 * 1000) => {
         const expiresAt = new Date(Date.now() + ttl);
         localStorage.setItem(key, JSON.stringify({ value, expiresAt }));
       };
@@ -34,7 +35,7 @@ export const ActiveUserProvider = ({children, user}) => {
         }
         return item;
       };
-
+      
       if(!getLocalStorage('userInfo')) {
         API.graphql({
           query: queries.listUsers,
@@ -53,14 +54,42 @@ export const ActiveUserProvider = ({children, user}) => {
         setUsers(getLocalStorage('userInfo').value);
       }
 
+      const updateUser = API.graphql({
+        query: onUpdateUser,
+        authMode: 'AMAZON_COGNITO_USER_POOLS',
+      }).subscribe({
+        next: (userData) => {
+          API.graphql({
+            query: queries.listUsers,
+            authMode: 'AMAZON_COGNITO_USER_POOLS',
+          })
+          .then((res) => {
+            setLocalStorage('userInfo', res.data.listUsers.items);
+          })
+          .catch((err) => {
+            console.log(err);
+            return null;
+          });
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+
+      return () => {
+        updateUser.unsubscribe();
+      }
+
   }, []);
+
+
 
   const loggedUser = {
     id: user.attributes.sub,
     username: user.username,
     name: user.attributes.name,
     email: user.attributes.email,
-    group: users.filter((userProfile) => userProfile.username === user.username).map((user) => user.group)[0],
+    group: users.filter((userProfile) => userProfile.username === user.username).map((user) => user.groups[0]),
     users: users
   }
 

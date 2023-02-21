@@ -10,6 +10,8 @@ exports.handler = async (event, context) => {
 
   // Determine the group name using the user's email address
   const groupName = email.endsWith("@ulm.edu") ? "Faculty" : "Student";
+  const groupList = [];
+  groupList.push(groupName);
 
   // Define the parameters for the adminAddUserToGroup API
   const params = {
@@ -38,7 +40,8 @@ exports.handler = async (event, context) => {
               'username': {S: username},
               'name': {S: name},
               'email': {S: email},
-              'group': {S: groupName},
+              'groups': {SS: groupList},
+              'verified': {BOOL: false},
               'createdAt': {S: date.toISOString()},
               'updatedAt': {S: date.toISOString()},
           },
@@ -47,7 +50,7 @@ exports.handler = async (event, context) => {
 
       try {
           await ddb.putItem(params).promise()
-          console.log("Successfull added user")
+          console.log("Successfully added user")
       } catch (err) {
           console.log("Error", err)
       }

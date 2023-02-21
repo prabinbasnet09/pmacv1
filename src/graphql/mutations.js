@@ -1,6 +1,20 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onVerifyUser = /* GraphQL */ `
+  mutation OnVerifyUser($input: VerifyUserInput!) {
+    onVerifyUser(input: $input) {
+      id
+      username
+      email
+      name
+      groups
+      verified
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
     $input: CreateUserInput!
@@ -11,7 +25,8 @@ export const createUser = /* GraphQL */ `
       username
       email
       name
-      group
+      groups
+      verified
       createdAt
       updatedAt
     }
@@ -27,7 +42,8 @@ export const updateUser = /* GraphQL */ `
       username
       email
       name
-      group
+      groups
+      verified
       createdAt
       updatedAt
     }
@@ -43,7 +59,8 @@ export const deleteUser = /* GraphQL */ `
       username
       email
       name
-      group
+      groups
+      verified
       createdAt
       updatedAt
     }

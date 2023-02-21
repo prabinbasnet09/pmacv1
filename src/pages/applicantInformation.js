@@ -27,7 +27,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 //     }
 // }
 
-function ApplicantInformation() {
+function ApplicantInformation({user}) {
     const activeUser = useContext(ActiveUser);
     // const [formData, setFormData] = useState({
     //     userId: data ? data.userId : '',
@@ -39,15 +39,16 @@ function ApplicantInformation() {
     //     minor: data && data.minor ? data.minor[0] : '',
     // });
     const [formData, setFormData] = useState({});
-
+   
     useEffect(() => {
         const getFormData = async () => {
             await API.graphql({
                 query: getApplicantForm,
-                variables: {userId: activeUser.id},
+                variables: {userId: user.attributes.sub},
                 authMode: 'AMAZON_COGNITO_USER_POOLS'
                 })
                 .then((res) => {
+                    if(res.data.getApplicantForm === null) return;
                     const response = res.data.getApplicantForm;
                     setFormData({
                         userId: response.userId,
@@ -68,13 +69,12 @@ function ApplicantInformation() {
 
         if(!localStorage.getItem('formData')){
             getFormData();
+            localStorage.setItem('formData', JSON.stringify(formData));
         } else {
             setFormData(JSON.parse(localStorage.getItem('formData')));
         }
-    }, [activeUser]);
-        
-    
-    
+        console.log(user)
+    }, []);
 
     const handleSave = (e) => {
         e.preventDefault();
