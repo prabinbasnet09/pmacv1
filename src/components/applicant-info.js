@@ -28,6 +28,7 @@ export default function ApplicantInfo(props){
     const handleFileRemove = async (e) => {
         e.preventDefault();
         setSelectedFile(null);
+        setChangeFile(false)
     }
     
     const handleFileUpload = async (e) => {
@@ -74,7 +75,6 @@ export default function ApplicantInfo(props){
             console.log(err);
         }
     }
-    console.log(selectedFile)
     return (
         <div className=''>
             <div className="p-3 flex items-center space-x-4">
