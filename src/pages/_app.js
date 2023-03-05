@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect} from "react";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
+import '../styles/globals.css'
 
 import { Amplify, API} from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";

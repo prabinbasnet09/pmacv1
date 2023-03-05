@@ -25,6 +25,9 @@
       },
       "api": {
         "pmacv1": {}
+      },
+      "storage": {
+        "recommendationletters": {}
       }
     }
   }

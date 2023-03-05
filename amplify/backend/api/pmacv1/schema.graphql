@@ -2,8 +2,8 @@ type User
   @model
   @auth(
     rules: [
-      { allow: groups, groups: ["Admin"] }
-      { allow: groups, groups: ["Faculty"], operations: [read] }
+      { allow: groups, groups: ["Admin", "Chair"] }
+      { allow: groups, groups: ["Faculty"], operations: [create, read, update] }
       { allow: owner, ownerField: "username", operations: [read, update] }
     ]
   ) { # FOR TESTING ONLY!
@@ -13,6 +13,7 @@ type User
   name: String!
   groups: [String!]!
   verified: Boolean!
+  fileURL: String
 }
 
 type ApplicantForm

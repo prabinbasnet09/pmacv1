@@ -13,6 +13,7 @@ export const onCreateUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }
@@ -30,6 +31,7 @@ export const onUpdateUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }
@@ -47,6 +49,7 @@ export const onDeleteUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }

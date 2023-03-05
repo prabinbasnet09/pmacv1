@@ -54,10 +54,10 @@ function Home({signOut}) {
                   <h1>Welcome {`${activeUser.name}`}</h1> 
                 </div>
                 {console.log(groups)}
-              {
-              (groups.filter(group => (group === "Admin" || group === "Chair Committee")).length > 0) ? 
+              {/* {
+              (groups.filter(group => (group === "Admin")).length > 0) ? 
                 <AppUsers /> :
-                <div>
+                <div> */}
                 <div>
                   <h3>Profile Information</h3>
                   {users.filter((user) => user.username === activeUser.username).map((userProfile) =>
@@ -66,7 +66,7 @@ function Home({signOut}) {
                       <h3>Email: {userProfile.email}</h3>
                     </div>
                   )} 
-                </div>
+                {/* // </div> */}
 
                 {
                   (groups.filter(group => group === "Student").length > 0) ?
@@ -81,7 +81,7 @@ function Home({signOut}) {
                       <h3>Information Release Form</h3>
                     </Link>
                   </div> : 
-                  (groups.filter(group => group === "Faculty").length > 0) ?
+                  (groups.filter(group => group !== "Student").length > 0) ?
                   <div>
                     <Link href="/applicants" >
                       <Button variant="contained">
@@ -91,7 +91,7 @@ function Home({signOut}) {
                   </div> : null
                 }   
                 </div>
-              }
+              {/* } */}
               </div>
               :
               <div>

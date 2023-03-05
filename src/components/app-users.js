@@ -17,6 +17,7 @@ import { API } from '@aws-amplify/api';
 export default function AppUsers(){
     const activeUser = useContext(ActiveUser);
     const [users, setUsers] = useState(activeUser.users);
+     
     let groupList = ['Student', 'Faculty', 'Chair Committee'];
 
     useEffect(() => {
@@ -98,7 +99,6 @@ export default function AppUsers(){
 
     return (
         <div>
-            <h1>Applicants List</h1>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 400 }} aria-label="caption table">
                     <caption>Users</caption>
@@ -114,14 +114,22 @@ export default function AppUsers(){
                             <TableCell align="right"><b>Verified</b></TableCell>
                         </> :
                         <>
-                            <TableCell align="right"><b>Upload File</b></TableCell>
+                            <TableCell align="right"><b>Status</b></TableCell>
+                            <TableCell align="right"><b>Notify Users</b></TableCell>
                         </>
                         }
                         
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {users.filter(user => user.username != activeUser.username).map((user) => {
+                    {users.filter(user => 
+                        {
+                            return(
+                            activeUser.group === "Admin" ?
+                            user.groups[0] !== "Admin" :
+                            user.groups[0] === "Student")
+                        })
+                        .map((user) => {
                         return (
                         <TableRow key={user.id}>
                         <TableCell component="th" scope="row">
@@ -156,7 +164,15 @@ export default function AppUsers(){
                         </> :
                         <>
                             <TableCell align="right">
-                                <input type="file" id="myfile" name="myfile" />
+                                
+                                {user.verified ?
+                                    <button className="p-2 bg-[rgb(93,235,100)] text-[rgb(255,255,255) rounded-lg">Complete</button> 
+                                    :
+                                    <button className="p-2 bg-[rgb(252,23,23)] text-[rgb(255,255,255) rounded-lg">Incomplete</button> 
+                                }
+                            </TableCell>
+                            <TableCell align="right">
+                                <button className="p-2 bg-[rgb(245,142,58)] text-[rgb(255,255,255) rounded-lg">Notify</button> 
                             </TableCell>
                         </>
 

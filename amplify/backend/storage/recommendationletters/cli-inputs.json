@@ -1,0 +1,27 @@
+{
+  "resourceName": "recommendationletters",
+  "policyUUID": "98bc2d54",
+  "bucketName": "pmacv1c04b6b160ada41188ce695887a834c16",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [],
+  "authAccess": [],
+  "groupAccess": {
+    "Student": [
+      "READ"
+    ],
+    "Faculty": [
+      "CREATE_AND_UPDATE",
+      "READ"
+    ],
+    "Admin": [
+      "CREATE_AND_UPDATE",
+      "READ",
+      "DELETE"
+    ],
+    "Chair": [
+      "CREATE_AND_UPDATE",
+      "READ",
+      "DELETE"
+    ]
+  }
+}

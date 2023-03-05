@@ -30,5 +30,11 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     }
+  },
+  "storage": {
+    "recommendationletters": {
+      "BucketName": "string",
+      "Region": "string"
+    }
   }
 }

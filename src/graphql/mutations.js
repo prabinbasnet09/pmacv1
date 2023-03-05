@@ -10,6 +10,7 @@ export const onVerifyUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }
@@ -27,6 +28,7 @@ export const createUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }
@@ -44,6 +46,7 @@ export const updateUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }
@@ -61,6 +64,7 @@ export const deleteUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }

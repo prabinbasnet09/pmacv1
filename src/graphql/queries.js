@@ -10,6 +10,7 @@ export const getUser = /* GraphQL */ `
       name
       groups
       verified
+      fileURL
       createdAt
       updatedAt
     }
@@ -29,6 +30,7 @@ export const listUsers = /* GraphQL */ `
         name
         groups
         verified
+        fileURL
         createdAt
         updatedAt
       }
